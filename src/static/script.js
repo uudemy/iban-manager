@@ -65,17 +65,23 @@ function setupEventListeners() {
 // IBAN'ları yükle
 async function loadIbans() {
     try {
+        console.log('🔄 Loading IBANs...');
         showLoading();
         const response = await fetch(`${API_BASE}/ibans`);
+        console.log('📡 Response status:', response.status);
         const data = await response.json();
+        console.log('📦 Response data:', data);
         
         if (data.success) {
             ibans = data.data;
+            console.log('✅ IBANs loaded:', ibans.length, 'items');
             renderIbans();
         } else {
+            console.error('❌ API Error:', data.error);
             showToast('Hata', data.error, 'error');
         }
     } catch (error) {
+        console.error('❌ Network Error:', error);
         showToast('Hata', 'IBAN\'lar yüklenirken bir hata oluştu', 'error');
         console.error('Error loading IBANs:', error);
     } finally {
@@ -86,13 +92,16 @@ async function loadIbans() {
 // IBAN'ları render et
 function renderIbans(filteredIbans = null) {
     const ibansToRender = filteredIbans || ibans;
+    console.log('🎨 Rendering IBANs:', ibansToRender.length, 'items');
     
     if (ibansToRender.length === 0) {
+        console.log('📭 No IBANs to display - showing empty state');
         ibanGrid.style.display = 'none';
         emptyState.style.display = 'block';
         return;
     }
     
+    console.log('📋 Showing IBAN grid with', ibansToRender.length, 'items');
     ibanGrid.style.display = 'grid';
     emptyState.style.display = 'none';
     
@@ -170,10 +179,13 @@ async function handleFormSubmit(e) {
         const result = await response.json();
         
         if (result.success) {
+            console.log('✅ IBAN added successfully:', result.data);
             showToast('Başarılı', result.message, 'success');
             resetForm();
+            console.log('🔄 Reloading IBANs after successful add...');
             loadIbans();
         } else {
+            console.error('❌ Failed to add IBAN:', result.error);
             showToast('Hata', result.error, 'error');
         }
     } catch (error) {

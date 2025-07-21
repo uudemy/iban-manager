@@ -1,18 +1,45 @@
 from flask import Blueprint, request, jsonify
+import logging
 from src.models.iban import IBAN, db
 
 iban_bp = Blueprint('iban', __name__)
+
+@iban_bp.route('/test', methods=['GET'])
+def test_endpoint():
+    """Test endpoint"""
+    return jsonify({
+        'success': True,
+        'message': 'IBAN routes are working',
+        'database_status': 'unknown'
+    })
 
 @iban_bp.route('/ibans', methods=['GET'])
 def get_ibans():
     """Tüm IBAN kayıtlarını getir"""
     try:
+        logger = logging.getLogger(__name__)
+        logger.info("GET /ibans endpoint called")
+        
+        # Database bağlantısını test et
+        try:
+            db.engine.connect()
+            logger.info("Database connection successful")
+        except Exception as db_error:
+            logger.error(f"Database connection failed: {db_error}")
+            return jsonify({
+                'success': False,
+                'error': 'Veritabanı bağlantısı kurulamadı'
+            }), 500
+        
         ibans = IBAN.query.order_by(IBAN.created_at.desc()).all()
+        logger.info(f"Found {len(ibans)} IBANs in database")
+        
         return jsonify({
             'success': True,
             'data': [iban.to_dict() for iban in ibans]
         })
     except Exception as e:
+        logger.error(f"Error in get_ibans: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
