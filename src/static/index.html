@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>IBAN Yönetim Sistemi</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="IBAN Manager">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="/icon-192x192.svg">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon-192x192.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-192x192.svg">
+    
+    <!-- Android -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- General -->
+    <meta name="description" content="IBAN numaralarınızı güvenli bir şekilde saklayın ve yönetin">
+    <link rel="icon" type="image/svg+xml" href="/icon-192x192.svg">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-university"></i> IBAN Yönetim Sistemi</h1>
+                <p>IBAN numaralarınızı güvenli bir şekilde saklayın ve yönetin</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Add IBAN Form -->
+            <section class="add-iban-section">
+                <div class="form-container">
+                    <h2><i class="fas fa-plus-circle"></i> Yeni IBAN Ekle</h2>
+                    <form id="ibanForm" class="iban-form">
+                        <div class="form-group">
+                            <label for="ibanNumber">IBAN Numarası *</label>
+                            <input type="text" id="ibanNumber" name="iban_number" placeholder="TR ile başlayacak, otomatik formatlanacak" required>
+                            <div class="validation-message" id="ibanValidation"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bankName">Banka Adı *</label>
+                            <input type="text" id="bankName" name="bank_name" placeholder="Örn: Türkiye İş Bankası" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="accountHolder">Hesap Sahibi *</label>
+                            <input type="text" id="accountHolder" name="account_holder" placeholder="Hesap sahibinin adı" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Açıklama</label>
+                            <textarea id="description" name="description" placeholder="İsteğe bağlı açıklama" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Kaydet
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="cancelBtn">
+                                <i class="fas fa-times"></i> İptal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- IBAN List -->
+            <section class="iban-list-section">
+                <div class="list-header">
+                    <h2><i class="fas fa-list"></i> Kayıtlı IBAN'lar</h2>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="IBAN, banka veya hesap sahibi ara...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                
+                <div class="iban-grid" id="ibanGrid">
+                    <!-- IBAN kartları buraya dinamik olarak eklenecek -->
+                </div>
+                
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-inbox"></i>
+                    <h3>Henüz IBAN kaydı yok</h3>
+                    <p>Yukarıdaki formu kullanarak ilk IBAN'ınızı ekleyin</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> IBAN Düzenle</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="editForm" class="iban-form">
+                <input type="hidden" id="editId">
+                
+                <div class="form-group">
+                    <label for="editIbanNumber">IBAN Numarası *</label>
+                    <input type="text" id="editIbanNumber" name="iban_number" placeholder="TR ile başlayacak, otomatik formatlanacak" required>
+                    <div class="validation-message" id="editIbanValidation"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editBankName">Banka Adı *</label>
+                    <input type="text" id="editBankName" name="bank_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editAccountHolder">Hesap Sahibi *</label>
+                    <input type="text" id="editAccountHolder" name="account_holder" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editDescription">Açıklama</label>
+                    <textarea id="editDescription" name="description" rows="3"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Güncelle
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="cancelEdit">
+                        <i class="fas fa-times"></i> İptal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-trash"></i> IBAN Sil</h3>
+                <button class="close-btn" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Bu IBAN kaydını silmek istediğinizden emin misiniz?</p>
+                <div class="delete-info" id="deleteInfo"></div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-danger" id="confirmDelete">
+                    <i class="fas fa-trash"></i> Sil
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancelDelete">
+                    <i class="fas fa-times"></i> İptal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

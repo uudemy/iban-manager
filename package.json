@@ -1,0 +1,16 @@
+{
+  "name": "iban-manager",
+  "version": "1.0.0",
+  "description": "IBAN Management System - Railway Deployment",
+  "main": "src/main.py",
+  "scripts": {
+    "start": "gunicorn --bind 0.0.0.0:$PORT src.main:app --workers 4 --timeout 120",
+    "dev": "python src/main.py"
+  },
+  "keywords": ["iban", "banking", "flask", "python", "finance"],
+  "author": "IBAN Manager Team",
+  "license": "MIT",
+  "engines": {
+    "python": "3.11.x"
+  }
+}

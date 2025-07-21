@@ -1,0 +1,36 @@
+{
+  "name": "IBAN Yönetim Sistemi",
+  "short_name": "IBAN Manager",
+  "description": "IBAN numaralarınızı güvenli bir şekilde saklayın ve yönetin",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "categories": ["finance", "productivity", "utilities"],
+  "lang": "tr",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icon-192x192.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "IBAN Yönetim Ana Ekranı"
+    }
+  ]
+}
