@@ -26,6 +26,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Uygulamayı başlat
 function initializeApp() {
+    console.log('🚀 App initializing...');
+    console.log('📍 API_BASE:', API_BASE);
+    console.log('🌍 Current URL:', window.location.href);
+    
+    // DOM elementlerini kontrol et
+    console.log('🔍 DOM Elements check:');
+    console.log('  ibanForm:', !!ibanForm);
+    console.log('  ibanGrid:', !!ibanGrid);
+    console.log('  emptyState:', !!emptyState);
+    
     loadIbans();
 }
 
@@ -546,5 +556,39 @@ if ('serviceWorker' in navigator) {
                 console.log('ServiceWorker kaydı başarısız: ', error);
             });
     });
+}
+
+// DEBUG: API Test Fonksiyonu
+async function testAPI() {
+    console.log('🧪 Manual API Test Started');
+    
+    try {
+        // Test 1: Health check
+        console.log('🏥 Testing health endpoint...');
+        const healthResponse = await fetch('/health');
+        console.log('Health status:', healthResponse.status);
+        const healthData = await healthResponse.json();
+        console.log('Health data:', healthData);
+        
+        // Test 2: Test endpoint
+        console.log('🔬 Testing API test endpoint...');
+        const testResponse = await fetch(`${API_BASE}/test`);
+        console.log('Test status:', testResponse.status);
+        const testData = await testResponse.json();
+        console.log('Test data:', testData);
+        
+        // Test 3: IBAN listesi
+        console.log('📋 Testing IBAN list endpoint...');
+        const ibansResponse = await fetch(`${API_BASE}/ibans`);
+        console.log('IBANs status:', ibansResponse.status);
+        const ibansData = await ibansResponse.json();
+        console.log('IBANs data:', ibansData);
+        
+        // Console summary
+        console.log('✅ API Test Complete - Check network tab for detailed requests');
+        
+    } catch (error) {
+        console.error('❌ API Test Failed:', error);
+    }
 }
 
