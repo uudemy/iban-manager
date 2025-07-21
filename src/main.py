@@ -1,9 +1,14 @@
 import os
 import sys
 from dotenv import load_dotenv
+import logging
 
 # Environment variables yükle
 load_dotenv()
+
+# Logging ayarla
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -40,10 +45,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 db.init_app(app)
-with app.app_context():
-    from src.models.user import User
-    from src.models.iban import IBAN
-    db.create_all()
+
+# Database initialization with error handling
+try:
+    with app.app_context():
+        from src.models.user import User
+        from src.models.iban import IBAN
+        db.create_all()
+        logger.info("Database tables created successfully")
+except Exception as e:
+    logger.error(f"Database initialization error: {e}")
+    # Continue anyway for health check
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -69,4 +81,13 @@ def health_check():
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     debug = os.getenv('FLASK_ENV') != 'production'
+    logger.info(f"Starting Flask app on port {port}")
+    logger.info(f"PORT environment variable: {os.getenv('PORT', 'not set')}")
+    logger.info(f"Debug mode: {debug}")
+    print(f"Starting server on port {port}")
     app.run(host='0.0.0.0', port=port, debug=debug)
+else:
+    # Gunicorn için
+    port = int(os.getenv('PORT', 5000))
+    logger.info(f"Gunicorn starting on port {port}")
+    print(f"Gunicorn starting on port {port}")

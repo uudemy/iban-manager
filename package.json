@@ -4,7 +4,7 @@
   "description": "IBAN Management System - Railway Deployment",
   "main": "src/main.py",
   "scripts": {
-    "start": "gunicorn --bind 0.0.0.0:$PORT src.main:app --workers 4 --timeout 120",
+    "start": "gunicorn --bind 0.0.0.0:${PORT:-5000} src.main:app --workers 4 --timeout 120",
     "dev": "python src/main.py"
   },
   "keywords": ["iban", "banking", "flask", "python", "finance"],
